@@ -44,7 +44,7 @@ export default function CreateQuiz() {
       setLoading(true);
 
       // 1️⃣ Create Quiz
-      const quizRes = await api.post("/quizzes/", {
+      const quizRes = await api.post("/teacher/quizzes/", {
         subject: subjectId,
         title,
         description: "",
