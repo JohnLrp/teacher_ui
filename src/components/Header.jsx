@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../api/apiClient";
 import "../styles/header.css";
 
 export default function Header() {
@@ -15,10 +16,27 @@ export default function Header() {
     }
   }, []);
 
+  const handleLogout = async () => {
+    try {
+      await api.post("/accounts/logout/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      localStorage.removeItem("access");
+      localStorage.removeItem("refresh");
+      localStorage.removeItem("avatar");
+      localStorage.removeItem("user");
+      localStorage.removeItem("teacher");
+      sessionStorage.clear();
+
+      setOpen(false);
+      window.location.href = "https://www.shikshacom.com/login";
+    }
+  };
+
   return (
     <header className="header">
       <div className="profile-menu" ref={menuRef}>
-
         <img
           src={avatar || "https://i.pravatar.cc/40?img=3"}
           alt="profile"
@@ -40,18 +58,27 @@ export default function Header() {
 
             <hr className="dropdown-divider" />
 
-            <button onClick={() => { navigate("/teacher/profile"); setOpen(false); }}>
+            <button
+              onClick={() => {
+                navigate("/teacher/profile");
+                setOpen(false);
+              }}
+            >
               Profile <span className="arrow">›</span>
             </button>
 
-            <button onClick={() => { navigate("/teacher/change-password"); setOpen(false); }}>
+            <button
+              onClick={() => {
+                navigate("/teacher/change-password");
+                setOpen(false);
+              }}
+            >
               Change Password <span className="arrow">›</span>
             </button>
 
-            <button onClick={() => { navigate("/"); setOpen(false); }}>
+            <button onClick={handleLogout}>
               Logout <span className="arrow">▷</span>
             </button>
-
           </div>
         )}
       </div>
