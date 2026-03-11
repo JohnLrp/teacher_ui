@@ -9,8 +9,8 @@ export default function UploadMaterial() {
 
   const navigate = useNavigate();
 
-  // Correct param name
-  const { chapterId } = useParams();
+  // Must match router param
+  const { subjectId } = useParams();
 
   const [title, setTitle] = useState("");
   const [files, setFiles] = useState([]);
@@ -58,14 +58,14 @@ export default function UploadMaterial() {
       });
 
       await api.post(
-        `/materials/chapters/${chapterId}/materials/upload/`,
+        `/materials/subjects/${subjectId}/materials/upload/`,
         formData
       );
 
       alert("Upload successful");
 
       navigate(
-        `/teacher/chapters/${chapterId}/study-materials`
+        `/teacher/classes/${subjectId}/study-materials`
       );
 
     } catch (err) {
