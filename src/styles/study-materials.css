@@ -218,3 +218,28 @@
   font-size: 14px;
   padding: 40px 0;
 }
+
+@media (max-width: 768px) {
+  .sm-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    padding: 12px 14px;
+  }
+
+  .sm-col-name {
+    flex: 1 1 100%;
+  }
+
+  .sm-col-date,
+  .sm-col-files {
+    flex: 0 1 auto;
+  }
+
+  .sm-col-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+  }
+}
