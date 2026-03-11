@@ -29,7 +29,7 @@ export default function StudyMaterials() {
     try {
 
       const res = await api.get(
-        `/materials/chapters/${subjectId}/materials/`
+        `/materials/classes/${subjectId}/materials/`
       );
 
       setMaterials(res.data);

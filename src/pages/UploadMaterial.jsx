@@ -59,7 +59,7 @@ export default function UploadMaterial() {
       });
 
       await api.post(
-        `/materials/chapters/${subjectId}/materials/upload/`,
+        `/materials/classes/${subjectId}/materials/upload/`,
         formData,
         {
           headers: {
