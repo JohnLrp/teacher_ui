@@ -32,6 +32,7 @@
   flex: 1;
   overflow-y: auto;
   min-height: 0;
+  min-width: 0;
 }
 
 .sr-header {
@@ -39,6 +40,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  gap: 12px;
 }
 
 .sr-title {
@@ -46,10 +48,12 @@
   font-weight: 700;
   color: #1f2d3d;
   margin: 0;
+  min-width: 0;
 }
 
 .sr-search {
   position: relative;
+  flex-shrink: 0;
 }
 
 .sr-search input {
@@ -60,6 +64,7 @@
   outline: none;
   width: 180px;
   background: #fff;
+  max-width: 100%;
 }
 
 .sr-search input:focus {
@@ -100,6 +105,7 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
+  min-width: 0;
 }
 
 .sr-card {
@@ -110,24 +116,29 @@
   display: flex;
   flex-direction: column;
   min-height: 160px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .sr-card-subject {
   font-size: 15px;
   font-weight: 700;
   margin: 0 0 2px 0;
+  word-break: break-word;
 }
 
 .sr-card-topic {
   font-size: 12px;
   margin: 0 0 16px 0;
   opacity: 0.85;
+  word-break: break-word;
 }
 
 .sr-card-teacher {
   font-size: 13px;
   margin: 0;
   flex: 1;
+  word-break: break-word;
 }
 
 .sr-card-bottom {
@@ -136,6 +147,7 @@
   align-items: baseline;
   gap: 8px;
   margin-top: 12px;
+  flex-wrap: wrap;
 }
 
 .sr-card-date {
@@ -146,4 +158,84 @@
 .sr-card-duration {
   font-size: 14px;
   font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .sr-content {
+    padding: 20px;
+  }
+
+  .sr-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sr-search {
+    width: 100%;
+  }
+
+  .sr-search input {
+    width: 100%;
+  }
+
+  .sr-actions {
+    justify-content: stretch;
+  }
+
+  .sr-add-btn {
+    width: 100%;
+  }
+
+  .sr-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .sr-card {
+    padding: 14px;
+    min-height: 140px;
+  }
+
+  .sr-card-subject {
+    font-size: 14px;
+  }
+
+  .sr-card-topic {
+    font-size: 11px;
+    margin-bottom: 12px;
+  }
+
+  .sr-card-teacher {
+    font-size: 12px;
+  }
+
+  .sr-card-date {
+    font-size: 11px;
+  }
+
+  .sr-card-duration {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sr-content {
+    padding: 16px;
+    border-radius: 14px;
+  }
+
+  .sr-title {
+    font-size: 18px;
+  }
+
+  .sr-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .sr-card {
+    padding: 12px;
+    min-height: 130px;
+    border-radius: 10px;
+  }
 }
