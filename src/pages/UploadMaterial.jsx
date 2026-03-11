@@ -8,7 +8,7 @@ import "../styles/upload-material.css";
 export default function UploadMaterial() {
 
   const navigate = useNavigate();
-  const { chapterId } = useParams();
+  const { subjectId } = useParams();
 
   const [title, setTitle] = useState("");
   const [files, setFiles] = useState([]);
@@ -43,7 +43,7 @@ export default function UploadMaterial() {
       });
 
       await api.post(
-        `/materials/chapters/${chapterId}/materials/upload/`,
+        `/materials/chapters/${subjectId}/materials/upload/`,
         formData
       );
 
