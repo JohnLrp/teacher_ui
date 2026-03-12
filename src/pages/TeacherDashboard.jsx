@@ -11,6 +11,7 @@ const assignments = [
   { id: "Assignment ID", status: "overdue" },
   {
     id: "Assignment: 1",
+    subjectId: 3,
     subject: "Introduction to AI",
     dueDate: "27 Feb 26 (Friday)",
     submissionRate: "28/45 (62%)",
