@@ -42,6 +42,16 @@ export default function UploadRecording() {
       return;
     }
 
+    if (!sessionDate) {
+      alert("Please select session date");
+      return;
+    }
+
+    if (!timing) {
+      alert("Please enter session timing");
+      return;
+    }
+
     if (!videoFile) {
       alert("Please attach a video file");
       return;
@@ -54,7 +64,7 @@ export default function UploadRecording() {
 
       console.log("Creating Bunny video slot...");
 
-      // 1️⃣ Create video slot
+      // STEP 1: Create Bunny video slot
       const res = await api.post(
         "/courses/recordings/create-video/",
         { title: topic }
@@ -76,9 +86,10 @@ export default function UploadRecording() {
         import.meta.env.VITE_BUNNY_UPLOAD_KEY
       );
 
+      // FIXED: correct content type
       xhr.setRequestHeader(
         "Content-Type",
-        "application/octet-stream"
+        videoFile.type
       );
 
       xhr.upload.onprogress = (e) => {
@@ -107,22 +118,31 @@ export default function UploadRecording() {
 
         console.log("Upload finished. Saving metadata...");
 
-        // 2️⃣ Save recording metadata
-        await api.post(
-          `/courses/subjects/${subjectId}/recordings/save/`,
-          {
-            title: topic,
-            session_date: sessionDate,
-            duration: timing,
-            video_id: videoId
-          }
-        );
+        try {
 
-        console.log("Recording saved");
+          // STEP 2: Save recording metadata
+          await api.post(
+            `/courses/subjects/${subjectId}/recordings/save/`,
+            {
+              title: topic,
+              session_date: sessionDate,
+              duration: timing,
+              video_id: videoId
+            }
+          );
+
+          console.log("Recording saved");
+
+          navigate(-1);
+
+        } catch (saveErr) {
+
+          console.error("Metadata save failed:", saveErr);
+
+          alert("Video uploaded but metadata failed to save.");
+        }
 
         setUploading(false);
-
-        navigate(-1);
       };
 
       xhr.onerror = () => {
