@@ -126,7 +126,7 @@ export default function SessionRecordings() {
                 <img
                   src={
                     rec.thumbnail_url ||
-                    `https://vz-615730.b-cdn.net/${rec.bunny_video_id}/thumbnail.jpg`
+                    `https://iframe.mediadelivery.net/thumbnail/${rec.bunny_video_id}.jpg`
                   }
                   alt={rec.title}
                 />
