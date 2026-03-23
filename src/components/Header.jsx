@@ -92,7 +92,7 @@ export default function Header({ onMenuClick }) {
             </button>
 
             <button onClick={handleReturnToHomepage}>
-              Return to Homepage <span className="arrow">›</span>
+              Return to Homepages <span className="arrow">›</span>
             </button>
 
             <button onClick={handleLogout}>
