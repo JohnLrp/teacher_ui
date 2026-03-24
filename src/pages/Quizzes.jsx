@@ -27,6 +27,22 @@ export default function Quizzes() {
     fetchQuizzes();
   }, [subjectId]);
 
+  const handlePublish = async (quizId) => {
+  try {
+    await api.patch(`/quizzes/${quizId}/publish/`);
+
+    alert("Quiz published successfully");
+
+    // refresh list
+    const res = await api.get(`/teacher/subjects/${subjectId}/quizzes/`);
+    setQuizzes(res.data.results || res.data);
+
+  } catch (err) {
+    console.error(err);
+    alert("Failed to publish quiz");
+  }
+};
+
   return (
     <div className="quizzes-page">
 
@@ -98,16 +114,33 @@ export default function Quizzes() {
                 </span>
               </div>
 
-              <button
-                className="quiz-view-btn"
-                onClick={() =>
-                  navigate(
-                    `/teacher/classes/${subjectId}/quizzes/${quiz.id}`
-                  )
-                }
-              >
-                View
-              </button>
+              <div style={{ display: "flex", gap: "10px" }}>
+            <button
+               className="quiz-view-btn"
+               onClick={() =>
+                navigate(
+                   `/teacher/classes/${subjectId}/quizzes/${quiz.id}`
+                )
+               }
+            >
+            View
+            </button>
+
+             {!quiz.is_published && (
+             <button
+                className="quiz-publish-btn"
+                onClick={() => handlePublish(quiz.id)}
+             >
+              Publish
+             </button>
+             )}
+
+            {quiz.is_published && (
+              <span style={{ color: "green", fontWeight: "600" }}>
+              Published
+            </span>
+            )}
+            </div>
             </div>
           ))}
         </div>
