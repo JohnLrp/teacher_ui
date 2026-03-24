@@ -10,6 +10,8 @@ export default function Header({ onMenuClick }) {
   const [open, setOpen] = useState(false);
   const [avatar, setAvatar] = useState(null);
 
+  const { user } = useAuth();
+
   useEffect(() => {
     const storedAvatar = localStorage.getItem("avatar");
     if (storedAvatar) {
@@ -62,7 +64,9 @@ export default function Header({ onMenuClick }) {
         {open && (
           <div className="dropdown">
             <div className="dropdown-header">
-              <span className="dropdown-username">James</span>
+              <span className="dropdown-username">
+  {user?.name || user?.username || "User"}
+</span>
 
               <img
                 src={avatar || "https://i.pravatar.cc/40?img=3"}
