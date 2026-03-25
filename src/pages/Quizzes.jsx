@@ -17,7 +17,7 @@ export default function Quizzes() {
         const res = await api.get(
           `/teacher/subjects/${subjectId}/quizzes/`
         );
-
+          console.log("QUIZ DATA:", res.data);
         setQuizzes(res.data.results || res.data);
       } catch (err) {
         console.error("Failed to load quizzes", err);
