@@ -15,7 +15,6 @@ export default function QuizView() {
   const [quiz, setQuiz] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [search, setSearch] = useState("");
-  const [revealed, setRevealed] = useState({});
 
   useEffect(() => {
     async function fetchQuiz() {
@@ -30,18 +29,15 @@ export default function QuizView() {
     fetchQuiz();
   }, [quizId]);
 
-  // ✅ UPDATED: handles both letter answers ("a","b") and full text answers
   const getAnswerText = (q) => {
     const answer = q.answer?.toLowerCase().trim();
 
-    // If answer is "a", "b", "c", "d" — map to option index
     const answerIndex = optionLabels.indexOf(answer);
     if (answerIndex >= 0 && q.options?.[answerIndex]) {
       const opt = q.options[answerIndex];
       return (opt.text || opt).trim();
     }
 
-    // If answer is already the full option text
     if (q.options) {
       const match = q.options.find((opt) => {
         const optText = (opt.text || opt).toLowerCase().trim();
@@ -52,9 +48,6 @@ export default function QuizView() {
 
     return q.answer?.trim() || "";
   };
-
-  const toggleReveal = (idx) =>
-    setRevealed((prev) => ({ ...prev, [idx]: !prev[idx] }));
 
   if (!quiz) {
     return <div className="qv-loading">Loading quiz...</div>;
@@ -122,7 +115,6 @@ export default function QuizView() {
 
             {filtered.map((q, qIndex) => {
               const answerText = getAnswerText(q);
-              const isOpen = !!revealed[qIndex];
 
               return (
                 <div className="qv-question-block" key={qIndex}>
@@ -131,27 +123,20 @@ export default function QuizView() {
                       <span className="qv-q-num">{qIndex + 1}.</span>
                       {q.text || "Question"}
                     </span>
-                    <button
-                      className={`qv-ans-toggle ${isOpen ? "open" : ""}`}
-                      onClick={() => toggleReveal(qIndex)}
-                    >
-                      {isOpen ? "Hide answer" : "Show answer"}
-                    </button>
                   </div>
 
                   <div className="qv-options-row">
                     {(q.options || q.choices || []).map((opt, optIndex) => {
                       const optText = (opt.text || opt).trim();
-                      // ✅ UPDATED: case-insensitive comparison
                       const isAnswer = optText.toLowerCase() === answerText.toLowerCase();
                       return (
                         <label
-                          className={`qv-option ${isOpen && isAnswer ? "qv-option-answer" : ""}`}
+                          className={`qv-option ${isAnswer ? "qv-option-answer" : ""}`}
                           key={optIndex}
                         >
                           <input type="radio" disabled />
                           <span>{optText}</span>
-                          {isOpen && isAnswer && (
+                          {isAnswer && (
                             <IoCheckmarkCircle className="qv-check-icon" />
                           )}
                         </label>
@@ -159,7 +144,7 @@ export default function QuizView() {
                     })}
                   </div>
 
-                  {isOpen && answerText && (
+                  {answerText && (
                     <div className="qv-answer-pill">
                       <IoCheckmarkCircle />
                       <span>Correct answer: <strong>{answerText}</strong></span>
