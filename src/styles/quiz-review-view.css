@@ -296,8 +296,6 @@
 .qrv-answer-row {
   display: flex;
   align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
 }
 
 .qrv-answer-pill {
@@ -317,40 +315,6 @@
 .pill-wrong {
   background: #fde8e8;
   color: #b03030;
-}
-
-.qrv-explain-btn {
-  background: transparent;
-  border: 1px solid #4ba7b5;
-  color: #4ba7b5;
-  border-radius: 6px;
-  padding: 4px 10px;
-  font-size: 11px;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-}
-
-.qrv-explain-btn:hover {
-  background: #4ba7b5;
-  color: #fff;
-}
-
-/* ── Hint box ── */
-.qrv-hint-box {
-  margin-top: 10px;
-  background: #fff8e1;
-  border-left: 3px solid #f0b429;
-  border-radius: 0 8px 8px 0;
-  padding: 9px 14px;
-  font-size: 12px;
-  color: #7a5c00;
-  line-height: 1.6;
-  animation: fadeSlide 0.2s ease;
-}
-
-@keyframes fadeSlide {
-  from { opacity: 0; transform: translateY(-4px); }
-  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ── No results ── */
