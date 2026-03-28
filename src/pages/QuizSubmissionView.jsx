@@ -83,7 +83,6 @@ export default function QuizSubmissionView() {
               <th>Name</th>
               <th>Latest Attempt</th>
               <th>Best Score</th>
-              <th>Avg Score</th>
               <th>Attempts</th>
               <th></th>
             </tr>
@@ -92,25 +91,27 @@ export default function QuizSubmissionView() {
           <tbody>
             {filteredStudents.map((student, index) => (
               <tr key={student.id || index}>
-  <td>{index + 1}</td>
-  <td>{student.student_name}</td>
-  <td>{formatDate(student.latest_submitted_at)}</td>
-  <td>{student.best_score} / {student.total_marks}</td>
-  <td>
-    {student.total_marks
-      ? `${((student.average_score / student.total_marks) * 100).toFixed(1)}%`
-      : "-"}
-  </td>
-  <td>{student.attempts_count}</td>
-  <td>
-    <button
-      className="qsv-review-btn"
-      onClick={() =>
-        navigate(
-          `/teacher/classes/${subjectId}/quizzes/${quizId}/student/${student.student_id}`
-        )
-      }
-    >
+                <td>{index + 1}</td>
+
+                <td>{student.student_name}</td>
+
+                <td>{formatDate(student.latest_submitted_at)}</td>
+
+                <td>
+                    {student.best_score} / {student.total_marks}
+                </td>
+
+                <td>{student.attempts_count}</td>
+
+                <td>
+                  <button
+                    className="qsv-review-btn"
+                    onClick={() =>
+                       navigate(
+                        `/teacher/classes/${subjectId}/quizzes/${quizId}/student/${student.student_id}`
+                      )
+                    }
+                  >
                     View
                   </button>
                 </td>
