@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { IoChevronBack } from "react-icons/io5";
 import { FiSearch } from "react-icons/fi";
 import api from "../api/apiClient";
@@ -13,43 +13,35 @@ export default function LiveSessions() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const fetchSessions = useCallback(async () => {
+    try {
+      setError(null);
+
+      const res = await api.get(
+        `/livestream/teacher/sessions/?subject_id=${subjectId}`
+      );
+
+      setSessions(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load sessions.");
+    } finally {
+      setLoading(false);
+    }
+  }, [subjectId]);
+
   useEffect(() => {
     if (!subjectId) return;
 
-    let mounted = true;
-
-    const fetchSessions = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const res = await api.get(
-          `/livestream/teacher/sessions/?subject_id=${subjectId}`
-        );
-
-        if (mounted) {
-          setSessions(Array.isArray(res.data) ? res.data : []);
-        }
-      } catch (err) {
-        console.error("Failed to load sessions", err);
-        if (mounted) {
-          setError("Unable to load sessions.");
-          setSessions([]);
-        }
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    };
-
     fetchSessions();
 
-    return () => {
-      mounted = false;
-    };
-  }, [subjectId]);
+    const interval = setInterval(fetchSessions, 30000); // 🔁 refresh every 30s
+    return () => clearInterval(interval);
+  }, [subjectId, fetchSessions]);
 
-  const handleJoin = (sessionId) => {
-    navigate(`/teacher/live/${sessionId}`);
+  const handleJoin = (session) => {
+    if (!session.can_join) return;
+    navigate(`/teacher/live/${session.id}`);
   };
 
   return (
@@ -89,7 +81,6 @@ export default function LiveSessions() {
         <div className="live-sessions-grid">
 
           {loading && <p>Loading sessions...</p>}
-
           {error && <p style={{ color: "red" }}>{error}</p>}
 
           {!loading && !error && sessions.length === 0 && (
@@ -104,13 +95,19 @@ export default function LiveSessions() {
               return (
                 <div
                   key={session.id}
-                  className="session-card"
-                  onClick={() => handleJoin(session.id)}
+                  className={`session-card ${!session.can_join ? "disabled" : ""}`}
+                  onClick={() => handleJoin(session)}
                 >
                   <div className="session-card-top">
-                    <h4 className="session-card-subject">
-                      {session.title}
-                    </h4>
+                    <h4>{session.title}</h4>
+
+                    <span className={`status ${session.computed_status}`}>
+                      {session.computed_status}
+                    </span>
+
+                    {session.computed_status === "LIVE" && (
+                      <span className="live-badge">🔴 LIVE</span>
+                    )}
                   </div>
 
                   <p className="session-card-teacher">
@@ -118,16 +115,11 @@ export default function LiveSessions() {
                   </p>
 
                   <div className="session-card-bottom">
-                    <span className="session-card-date">
-                      {isNaN(startDate)
-                        ? "-"
-                        : startDate.toLocaleDateString()}
+                    <span>
+                      {startDate.toLocaleDateString()}
                     </span>
-
-                    <span className="session-card-timing">
-                      {isNaN(startDate)
-                        ? "-"
-                        : startDate.toLocaleTimeString()}
+                    <span>
+                      {startDate.toLocaleTimeString()}
                     </span>
                   </div>
                 </div>

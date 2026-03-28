@@ -16,11 +16,25 @@ export default function TeacherCreateLiveSession() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // ✅ Fix timezone shift issue
+  const toLocalISOString = (dateStr) => {
+    const date = new Date(dateStr);
+    return new Date(
+      date.getTime() - date.getTimezoneOffset() * 60000
+    ).toISOString();
+  };
+
   const handleSubmit = async () => {
     setError(null);
 
+    // ✅ Basic validation
     if (!form.title || !form.start_time || !form.end_time) {
       setError("Please fill all required fields.");
+      return;
+    }
+
+    if (new Date(form.start_time) >= new Date(form.end_time)) {
+      setError("End time must be after start time.");
       return;
     }
 
@@ -30,9 +44,9 @@ export default function TeacherCreateLiveSession() {
       await api.post("/livestream/sessions/", {
         title: form.title,
         description: form.description,
-        subject_id: subjectId, // ✅ backend expects this
-        start_time: new Date(form.start_time).toISOString(), // ✅ correct ISO format
-        end_time: new Date(form.end_time).toISOString(),
+        subject_id: subjectId,
+        start_time: toLocalISOString(form.start_time),
+        end_time: toLocalISOString(form.end_time),
       });
 
       navigate(-1);
@@ -40,7 +54,11 @@ export default function TeacherCreateLiveSession() {
       console.error(err.response?.data);
 
       if (err.response?.data) {
-        setError(JSON.stringify(err.response.data));
+        // ✅ Clean error display
+        const msg = Object.values(err.response.data)
+          .flat()
+          .join(" ");
+        setError(msg);
       } else {
         setError("Failed to create session.");
       }
@@ -49,12 +67,22 @@ export default function TeacherCreateLiveSession() {
     }
   };
 
+  // ✅ Prevent selecting past time
+  const now = new Date();
+  const minDateTime = new Date(
+    now.getTime() - now.getTimezoneOffset() * 60000
+  )
+    .toISOString()
+    .slice(0, 16);
+
   return (
-    <div style={{ padding: 20 }}>
+    <div style={{ padding: 20, maxWidth: 500 }}>
       <h2>Create Live Session</h2>
 
       {error && (
-        <p style={{ color: "red" }}>{error}</p>
+        <p style={{ color: "red", marginBottom: 10 }}>
+          {error}
+        </p>
       )}
 
       <input
@@ -63,6 +91,7 @@ export default function TeacherCreateLiveSession() {
         onChange={(e) =>
           setForm({ ...form, title: e.target.value })
         }
+        style={{ width: "100%", padding: 8 }}
       />
 
       <br /><br />
@@ -73,37 +102,54 @@ export default function TeacherCreateLiveSession() {
         onChange={(e) =>
           setForm({ ...form, description: e.target.value })
         }
+        style={{ width: "100%", padding: 8 }}
       />
 
       <br /><br />
 
+      <label>Start Time</label>
       <input
         type="datetime-local"
         value={form.start_time}
+        min={minDateTime}
         onChange={(e) =>
           setForm({
             ...form,
             start_time: e.target.value,
           })
         }
+        style={{ width: "100%", padding: 8 }}
       />
 
       <br /><br />
 
+      <label>End Time</label>
       <input
         type="datetime-local"
         value={form.end_time}
+        min={form.start_time || minDateTime}
         onChange={(e) =>
           setForm({
             ...form,
             end_time: e.target.value,
           })
         }
+        style={{ width: "100%", padding: 8 }}
       />
 
       <br /><br />
 
-      <button onClick={handleSubmit} disabled={loading}>
+      <button
+        onClick={handleSubmit}
+        disabled={loading}
+        style={{
+          padding: "10px 20px",
+          background: loading ? "#ccc" : "#007bff",
+          color: "white",
+          border: "none",
+          cursor: "pointer",
+        }}
+      >
         {loading ? "Creating..." : "Create Session"}
       </button>
     </div>

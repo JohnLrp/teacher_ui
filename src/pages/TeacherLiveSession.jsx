@@ -1,10 +1,40 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { LiveKitRoom, RoomAudioRenderer } from "@livekit/components-react";
-import api from "../api/apiClient";
+import {
+  LiveKitRoom,
+  RoomAudioRenderer,
+  useRoomContext,
+} from "@livekit/components-react";
 
+import api from "../api/apiClient";
 import ClassroomUI from "../components/live/ClassroomUI";
 import TeacherControls from "../components/live/TeacherControls";
+
+function LeaveButton() {
+  const room = useRoomContext();
+  const navigate = useNavigate();
+
+  const leave = async () => {
+    await room.disconnect();
+    navigate(-1);
+  };
+
+  return (
+    <button
+      style={{
+        position: "absolute",
+        top: 20,
+        right: 20,
+        background: "red",
+        color: "white",
+        padding: "10px",
+      }}
+      onClick={leave}
+    >
+      Leave Session
+    </button>
+  );
+}
 
 export default function TeacherLiveSession() {
   const { id } = useParams();
@@ -22,20 +52,15 @@ export default function TeacherLiveSession() {
     const joinSession = async () => {
       try {
         setLoading(true);
-        setError(null);
 
         const res = await api.post(
           `/livestream/sessions/${id}/join/`
         );
 
-        if (mounted) {
-          setSessionData(res.data);
-        }
+        if (mounted) setSessionData(res.data);
       } catch (err) {
-        console.error("Failed to join session:", err);
-        if (mounted) {
-          setError("Unable to join session.");
-        }
+        console.error(err);
+        if (mounted) setError("Unable to join session.");
       } finally {
         if (mounted) setLoading(false);
       }
@@ -49,14 +74,16 @@ export default function TeacherLiveSession() {
   }, [id]);
 
   if (loading) {
-    return <div style={{ padding: 20 }}>Connecting to session...</div>;
+    return <div style={{ padding: 20 }}>Connecting...</div>;
   }
 
-  if (error || !sessionData?.livekit_url || !sessionData?.token) {
+  if (error || !sessionData?.token) {
     return (
       <div style={{ padding: 20 }}>
-        <p>{error || "Session unavailable."}</p>
-        <button onClick={() => navigate(-1)}>Go Back</button>
+        <p>{error || "Session unavailable"}</p>
+        <button onClick={() => window.location.reload()}>
+          Retry
+        </button>
       </div>
     );
   }
@@ -66,9 +93,14 @@ export default function TeacherLiveSession() {
       serverUrl={sessionData.livekit_url}
       token={sessionData.token}
       connect={true}
-      video={true}
-      audio={true}
+      video
+      audio
+      onDisconnected={() => {
+        alert("Session ended");
+        navigate(-1);
+      }}
     >
+      <LeaveButton />
       <ClassroomUI role="teacher" />
       <TeacherControls />
       <RoomAudioRenderer />
