@@ -60,7 +60,7 @@ export default function Quizzes() {
             <div className="qz-modal-icon">⚠️</div>
             <h3 className="qz-modal-title">Quiz Not Published</h3>
             <p className="qz-modal-msg">
-              The quiz must be published before it can be viewed.
+              This quiz must be published before it can be viewed.
             </p>
             <button className="qz-modal-btn" onClick={() => setShowModal(false)}>
               Got it
