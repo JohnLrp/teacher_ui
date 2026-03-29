@@ -3,6 +3,7 @@ import { Track } from "livekit-client";
 import ParticipantsPanel from "./ParticipantsPanel";
 import ChatPanel from "./ChatPanel";
 import { useState } from "react";
+import "../styles/classroom.css";
 
 export default function ClassroomUI({ role }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -12,7 +13,7 @@ export default function ClassroomUI({ role }) {
     { source: Track.Source.ScreenShare, withPlaceholder: false },
   ]);
 
-  // 🔐 PRODUCTION SAFE: Detect teacher by publish permission
+  // Detect teacher (publisher)
   const teacherTrack = tracks.find(
     (t) => t.participant.permissions?.canPublish
   );
@@ -20,28 +21,39 @@ export default function ClassroomUI({ role }) {
   if (!teacherTrack) {
     return (
       <div className="waiting-screen">
-        <h2>Waiting for teacher to start video or share screen…</h2>
+        <h2>Waiting for teacher to start video…</h2>
       </div>
     );
   }
 
   return (
-    <div className="classroom-layout">
-      <div className={`main-stage ${sidebarOpen ? "" : "full-width"}`}>
+    <div className="classroom-container">
+
+      {/* MAIN VIDEO */}
+      <div className={`video-section ${sidebarOpen ? "" : "full"}`}>
+        
+        <div className="video-wrapper">
+          <VideoTrack trackRef={teacherTrack} />
+        </div>
+
         <button
-          className="toggle-sidebar-btn"
+          className="toggle-btn"
           onClick={() => setSidebarOpen(!sidebarOpen)}
         >
-          {sidebarOpen ? "Hide Chat" : "Show Chat"}
+          {sidebarOpen ? "Hide Panel" : "Show Panel"}
         </button>
-
-        <VideoTrack trackRef={teacherTrack} />
       </div>
 
+      {/* SIDEBAR */}
       {sidebarOpen && (
-        <div className="right-sidebar">
-          <ParticipantsPanel />
-          <ChatPanel role={role} />
+        <div className="sidebar">
+          <div className="participants-section">
+            <ParticipantsPanel />
+          </div>
+
+          <div className="chat-section">
+            <ChatPanel role={role} />
+          </div>
         </div>
       )}
     </div>
