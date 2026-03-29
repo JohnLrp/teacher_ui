@@ -1,56 +1,22 @@
-import { useParticipants, useRoomContext } from "@livekit/components-react";
-import { useEffect, useState } from "react";
+import { useParticipants } from "@livekit/components-react";
+import { useState } from "react";
 import { IoPeople } from "react-icons/io5";
 
-export default function ParticipantsPanel() {
+export default function ParticipantsPanel({ raisedHands = {} }) {
   const participants = useParticipants();
-  const room = useRoomContext();
-
   const [open, setOpen] = useState(true);
-  const [raisedHands, setRaisedHands] = useState({});
 
-  useEffect(() => {
-    const handleData = (payload, participant) => {
-      try {
-        const text = new TextDecoder().decode(payload);
-        const msg = JSON.parse(text);
-
-        if (msg.type === "raise-hand") {
-          setRaisedHands((prev) => ({
-            ...prev,
-            [participant.identity]: true,
-          }));
-
-          setTimeout(() => {
-            setRaisedHands((prev) => {
-              const updated = { ...prev };
-              delete updated[participant.identity];
-              return updated;
-            });
-          }, 15000);
-        }
-      } catch {}
-    };
-
-    room.on("dataReceived", handleData);
-    return () => room.off("dataReceived", handleData);
-  }, [room]);
-
-  // teacher first
   const sortedParticipants = [...participants].sort((a, b) => {
-    const aIsTeacher = a.permissions?.canPublish ? 1 : 0;
-    const bIsTeacher = b.permissions?.canPublish ? 1 : 0;
-    return bIsTeacher - aIsTeacher;
+    const aT = a.permissions?.canPublish ? 1 : 0;
+    const bT = b.permissions?.canPublish ? 1 : 0;
+    return bT - aT;
   });
 
   return (
     <div className="participants-wrapper">
 
       {/* HEADER */}
-      <div
-        className="participants-header"
-        onClick={() => setOpen(!open)}
-      >
+      <div className="participants-header" onClick={() => setOpen((o) => !o)}>
         <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
           <IoPeople size={16} />
           Participants ({participants.length})
@@ -81,9 +47,7 @@ export default function ParticipantsPanel() {
                       TEACHER
                     </span>
                   )}
-                  {handRaised && (
-                    <span className="raised-hand-icon">✋</span>
-                  )}
+                  {handRaised && <span className="raised-hand-icon">✋</span>}
                 </div>
               </div>
             );
