@@ -26,6 +26,8 @@ import TeacherCreateLiveSession from "../pages/TeacherCreateLiveSession";
 import Profile from "../pages/Profile";
 import StudentsList from "../pages/StudentsList";
 import StudentDetail from "../pages/StudentDetail";
+import AllStudents from "../pages/AllStudents";
+import AllStudentDetail from "../pages/AllStudentDetail";
 import ProtectedTeacherRoute from "./ProtectedTeacherRoute";
 import QuizStudentAttemptsView from "../pages/QuizStudentAttemptsView";
 
@@ -52,6 +54,8 @@ export default function TeacherRoutes() {
       >
         <Route path="profile" element={<Profile />} />
         <Route path="dashboard" element={<TeacherDashboard />} />
+        <Route path="students" element={<AllStudents />} />
+        <Route path="students/:studentId" element={<AllStudentDetail />} />
         <Route path="classes" element={<ClassesList />} />
         <Route path="classes/:subjectId" element={<Classes />} />
 

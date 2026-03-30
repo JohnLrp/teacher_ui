@@ -1,0 +1,156 @@
+/**
+ * AllStudents.jsx
+ *
+ * HOW THIS PAGE WORKS:
+ *
+ * 1. On mount (useEffect), we call GET /courses/teacher/all-students/
+ *    → This returns all students across all the teacher's classes
+ *
+ * 2. We store the response in `data` state
+ *
+ * 3. The `search` state filters students by name/email/ID as user types
+ *    → filter() runs on every render, comparing against the search query
+ *
+ * 4. Each row is clickable — navigates to student detail page
+ *    → We pass student data via router state (no extra API call needed)
+ */
+
+import { useNavigate } from "react-router-dom";
+import { FiSearch } from "react-icons/fi";
+import { useEffect, useState } from "react";
+import api from "../api/apiClient";
+import "../styles/students.css";
+
+export default function AllStudents() {
+  const navigate = useNavigate();
+
+  // State: stores the API response { total_students, students[] }
+  const [data, setData] = useState(null);
+  // State: the search input value
+  const [search, setSearch] = useState("");
+  // State: loading flag to show spinner/message while fetching
+  const [loading, setLoading] = useState(true);
+
+  // useEffect runs ONCE on mount (empty dependency array [])
+  // It fetches all students from the backend
+  useEffect(() => {
+    async function fetchStudents() {
+      try {
+        const res = await api.get("/courses/teacher/all-students/");
+        setData(res.data);
+      } catch (err) {
+        console.error("Failed to load students", err);
+      } finally {
+        setLoading(false); // Always stop loading, even on error
+      }
+    }
+
+    fetchStudents();
+  }, []);
+
+  // Early returns for loading/error states
+  if (loading) return <div className="students-loading">Loading students...</div>;
+  if (!data) return <div className="students-loading">Failed to load students.</div>;
+
+  // Filter students based on search input
+  // .filter() creates a NEW array with only matching items
+  // .toLowerCase() makes the search case-insensitive
+  const filtered = data.students.filter((s) => {
+    const q = search.toLowerCase();
+    return (
+      (s.full_name || "").toLowerCase().includes(q) ||
+      (s.email || "").toLowerCase().includes(q) ||
+      (s.student_id || "").toLowerCase().includes(q) ||
+      (s.course_title || "").toLowerCase().includes(q)
+    );
+  });
+
+  return (
+    <div className="students-page">
+      {/* Header with title and search */}
+      <div className="students-header">
+        <div>
+          <h2 className="students-title">All Students</h2>
+          <p className="students-subtitle">
+            {data.total_students} student{data.total_students !== 1 ? "s" : ""} across all your classes
+          </p>
+        </div>
+
+        <div className="students-search">
+          <input
+            type="text"
+            placeholder="Search by name, email, ID or course..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <FiSearch className="students-search-icon" />
+        </div>
+      </div>
+
+      {/* Table or empty message */}
+      {filtered.length === 0 ? (
+        <p className="students-empty">
+          {search ? "No students match your search." : "No students enrolled."}
+        </p>
+      ) : (
+        <div className="students-table-wrap">
+          <table className="students-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Student ID</th>
+                <th>Course</th>
+                <th>Enrolled</th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* .map() loops through each student and renders a <tr> */}
+              {filtered.map((student, idx) => (
+                <tr
+                  key={student.id}
+                  className="students-row"
+                  onClick={() =>
+                    navigate(`/teacher/students/${student.id}`, {
+                      state: { student },
+                    })
+                  }
+                >
+                  <td>{idx + 1}</td>
+                  <td>
+                    <div className="students-name-cell">
+                      {/* Avatar: show image, emoji, or first letter fallback */}
+                      <div className="students-avatar">
+                        {student.avatar_type === "image" && student.avatar ? (
+                          <img src={student.avatar} alt="" />
+                        ) : student.avatar_type === "emoji" && student.avatar ? (
+                          <span>{student.avatar}</span>
+                        ) : (
+                          <span>
+                            {(student.full_name || "?")[0].toUpperCase()}
+                          </span>
+                        )}
+                      </div>
+                      <span>{student.full_name || student.username}</span>
+                    </div>
+                  </td>
+                  <td>{student.email}</td>
+                  <td>{student.student_id || "—"}</td>
+                  <td>{student.course_title}</td>
+                  <td>
+                    {new Date(student.enrolled_at).toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
