@@ -126,10 +126,18 @@ export default function LiveSessions() {
 
                   <div className="session-card-bottom">
                     <span>
-                      {startDate.toLocaleDateString()}
-                    </span>
+                      {startDate.toLocaleDateString("en-IN", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                   </span>
+
                     <span>
-                      {startDate.toLocaleTimeString()}
+                      {startDate.toLocaleTimeString("en-IN", {
+                         hour: "2-digit",
+                        minute: "2-digit",
+                      })}
                     </span>
                   </div>
                 </div>

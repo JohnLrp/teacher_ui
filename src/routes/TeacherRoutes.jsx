@@ -1,14 +1,3 @@
-/**
- * FILE: teacher_ui/src/routes/TeacherRoutes.jsx
- * REPLACE the existing file.
- *
- * FIXES:
- * - Added missing route for /teacher/private-sessions/availability
- * - PrivateSessionLive is now mounted at /teacher/live/:id (already exists)
- *   so no duplicate needed — the existing live/:id route handles it
- * - Cleaned up the private session routes to be consistent
- */
-
 import { Routes, Route } from "react-router-dom";
 import { useEffect } from "react";
 
@@ -36,6 +25,10 @@ import RecordingPlayer from "../pages/RecordingPlayer";
 import LiveSessions from "../pages/LiveSessions";
 import TeacherCreateLiveSession from "../pages/TeacherCreateLiveSession";
 import Profile from "../pages/Profile";
+import StudentsList from "../pages/StudentsList";
+import StudentDetail from "../pages/StudentDetail";
+import AllStudents from "../pages/AllStudents";
+import AllStudentDetail from "../pages/AllStudentDetail";
 import ProtectedTeacherRoute from "./ProtectedTeacherRoute";
 import QuizStudentAttemptsView from "../pages/QuizStudentAttemptsView";
 import PrivateSessionsDashboard from "../pages/PrivateSessionsDashboard";
@@ -65,6 +58,8 @@ export default function TeacherRoutes() {
       >
         <Route path="profile" element={<Profile />} />
         <Route path="dashboard" element={<TeacherDashboard />} />
+        <Route path="students" element={<AllStudents />} />
+        <Route path="students/:studentId" element={<AllStudentDetail />} />
         <Route path="classes" element={<ClassesList />} />
         <Route path="classes/:subjectId" element={<Classes />} />
 
@@ -91,6 +86,10 @@ export default function TeacherRoutes() {
         <Route path="classes/:subjectId/session-recordings" element={<SessionRecordings />} />
         <Route path="classes/:subjectId/session-recordings/upload" element={<UploadRecording />} />
         <Route path="classes/:subjectId/session-recordings/:recordingId/:videoId" element={<RecordingPlayer />} />
+
+        {/* Students (per class) */}
+        <Route path="classes/:subjectId/students" element={<StudentsList />} />
+        <Route path="classes/:subjectId/students/:studentId" element={<StudentDetail />} />
 
         {/* Live Sessions */}
         <Route path="classes/:subjectId/live-sessions" element={<LiveSessions />} />

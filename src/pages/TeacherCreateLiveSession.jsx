@@ -18,13 +18,6 @@ export default function TeacherCreateLiveSession() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const toLocalISOString = (dateStr) => {
-    const date = new Date(dateStr);
-    return new Date(
-      date.getTime() - date.getTimezoneOffset() * 60000
-    ).toISOString();
-  };
-
   const handleSubmit = async () => {
     setError(null);
 
@@ -45,8 +38,8 @@ export default function TeacherCreateLiveSession() {
         title: form.title,
         description: form.description,
         subject_id: subjectId,
-        start_time: toLocalISOString(form.start_time),
-        end_time: toLocalISOString(form.end_time),
+        start_time: form.start_time,   // ✅ FIXED
+        end_time: form.end_time,       // ✅ FIXED
       });
 
       navigate(-1);
@@ -58,6 +51,7 @@ export default function TeacherCreateLiveSession() {
     }
   };
 
+  // ✅ FIXED: keep datetime-local format only
   const now = new Date();
   const minDateTime = new Date(
     now.getTime() - now.getTimezoneOffset() * 60000
@@ -74,7 +68,9 @@ export default function TeacherCreateLiveSession() {
 
       <div className="lsc-card">
         <h2 className="lsc-title">Schedule Live Session</h2>
-        <p className="lsc-subtitle">Fill in the details to create a new live class for your students.</p>
+        <p className="lsc-subtitle">
+          Fill in the details to create a new live class for your students.
+        </p>
 
         {error && <div className="lsc-error">⚠ {error}</div>}
 
@@ -86,7 +82,9 @@ export default function TeacherCreateLiveSession() {
               className="lsc-input"
               placeholder="e.g. Chapter 5 — Introduction to Algebra"
               value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, title: e.target.value })
+              }
             />
           </div>
 
@@ -113,7 +111,10 @@ export default function TeacherCreateLiveSession() {
                 value={form.start_time}
                 min={minDateTime}
                 onChange={(e) =>
-                  setForm({ ...form, start_time: e.target.value })
+                  setForm({
+                    ...form,
+                    start_time: e.target.value,
+                  })
                 }
               />
             </div>
@@ -126,7 +127,10 @@ export default function TeacherCreateLiveSession() {
                 value={form.end_time}
                 min={form.start_time || minDateTime}
                 onChange={(e) =>
-                  setForm({ ...form, end_time: e.target.value })
+                  setForm({
+                    ...form,
+                    end_time: e.target.value,
+                  })
                 }
               />
             </div>
