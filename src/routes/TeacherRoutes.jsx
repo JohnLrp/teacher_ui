@@ -24,6 +24,8 @@ import RecordingPlayer from "../pages/RecordingPlayer";
 import LiveSessions from "../pages/LiveSessions";
 import TeacherCreateLiveSession from "../pages/TeacherCreateLiveSession";
 import Profile from "../pages/Profile";
+import StudentsList from "../pages/StudentsList";
+import StudentDetail from "../pages/StudentDetail";
 import ProtectedTeacherRoute from "./ProtectedTeacherRoute";
 import QuizStudentAttemptsView from "../pages/QuizStudentAttemptsView";
 
@@ -118,6 +120,15 @@ export default function TeacherRoutes() {
         <Route
           path="classes/:subjectId/session-recordings/:recordingId/:videoId"
           element={<RecordingPlayer />}
+        />
+
+        <Route
+          path="classes/:subjectId/students"
+          element={<StudentsList />}
+        />
+        <Route
+          path="classes/:subjectId/students/:studentId"
+          element={<StudentDetail />}
         />
 
         <Route

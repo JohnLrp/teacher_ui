@@ -1,0 +1,146 @@
+.sd-page {
+  padding: 16px 24px 32px;
+  background: #bcd6da;
+  min-height: 100%;
+}
+
+.sd-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #4ba7b5;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.sd-back-btn:hover {
+  background: #3d8f9b;
+}
+
+.sd-empty {
+  text-align: center;
+  color: #888;
+  padding: 40px;
+  font-size: 15px;
+}
+
+.sd-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 28px 32px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  max-width: 700px;
+}
+
+.sd-profile-section {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #eef2f3;
+}
+
+.sd-avatar-large {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #4ba7b5;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 700;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.sd-avatar-large img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sd-profile-info h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1f2d3d;
+  margin: 0 0 6px;
+}
+
+.sd-subject-badge {
+  display: inline-block;
+  background: #e8f6f8;
+  color: #3d8f9b;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 12px;
+  border-radius: 20px;
+  margin: 0;
+}
+
+.sd-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.sd-detail-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.sd-detail-icon {
+  color: #4ba7b5;
+  font-size: 20px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.sd-detail-label {
+  display: block;
+  font-size: 12px;
+  color: #8a9baa;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 2px;
+}
+
+.sd-detail-value {
+  display: block;
+  font-size: 15px;
+  color: #1f2d3d;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .sd-page {
+    padding: 12px 12px 24px;
+  }
+
+  .sd-card {
+    padding: 20px 18px;
+  }
+
+  .sd-details-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .sd-profile-section {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .sd-profile-info h2 {
+    font-size: 18px;
+  }
+}
