@@ -97,6 +97,14 @@ export default function Classes() {
             onHover={() => setHoveredTitle("Live Sessions")}
           />
 
+          <SubjectCard
+            title="Students"
+            count={dashboard.studentsCount || 0}
+            label="Enrolled"
+            path={`${base}/students`}
+            onHover={() => setHoveredTitle("Students")}
+          />
+
         </div>
       </div>
     </div>
