@@ -25,10 +25,15 @@
   cursor: pointer;
   width: fit-content;
   flex-shrink: 0;
+  transition: all 0.15s ease;
 }
 
 .assignments-back-btn:hover {
   background: #3d9aa8;
+}
+
+.assignments-back-btn:active {
+  transform: scale(0.97);
 }
 
 .assignments-title-container {
@@ -60,10 +65,12 @@
   outline: none;
   width: 180px;
   background: #fff;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
 }
 
 .assignments-search input:focus {
   border-color: #4ba7b5;
+  box-shadow: 0 0 0 2px rgba(75, 167, 181, 0.15);
 }
 
 .assignments-search-icon {
@@ -99,10 +106,16 @@
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.15s ease;
 }
 
 .assignments-create-btn:hover {
   background: #3d9aa8;
+  transform: translateY(-1px);
+}
+
+.assignments-create-btn:active {
+  transform: scale(0.97);
 }
 
 .assignments-list {
@@ -118,10 +131,22 @@
   border-radius: 10px;
   padding: 16px 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .assignment-row:nth-child(even) {
   background: #f7f9fa;
+}
+
+.assignment-row:hover {
+  background: #f9fafb;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.assignment-row:active {
+  transform: scale(0.99);
 }
 
 .assignment-info {
@@ -176,10 +201,24 @@
   font-weight: 500;
   cursor: pointer;
   margin-left: 16px;
+  transition: all 0.15s ease;
 }
 
 .assignment-view-btn:hover {
   background: #3d9aa8;
+  transform: scale(1.05);
+}
+
+.assignment-view-btn:active {
+  transform: scale(0.95);
+}
+
+/* Empty state */
+.assignments-empty {
+  text-align: center;
+  padding: 40px;
+  color: #8a9aa9;
+  font-size: 14px;
 }
 
 /* mobile + large phone */

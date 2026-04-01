@@ -80,7 +80,12 @@ export default function Assignments() {
             <div>No assignments created yet.</div>
           )}
 
-          {assignments.map((assignment) => (
+          {assignments
+  .filter((a) =>
+    a.title.toLowerCase().includes(search.toLowerCase())
+  )
+  .map((assignment) => (
+    
             <div className="assignment-row" key={assignment.id}>
 
               <div className="assignment-info">
