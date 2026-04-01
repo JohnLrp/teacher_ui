@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
-import privateSession from "../api/privateSessionService";
+import * privateSession from "../api/privateSessionService";
 import "../styles/privateSessions.css";
 
 const MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];

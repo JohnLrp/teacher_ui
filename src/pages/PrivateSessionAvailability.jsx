@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import privateSession from "../api/privateSessionService";
+import * as privateSession from "../api/privateSessionService";
 import "../styles/privateSessions.css";
 
 export default function PrivateSessionAvailability() {
