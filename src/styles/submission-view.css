@@ -162,3 +162,68 @@
 .sv-review-btn:hover {
   background: #2ea88a;
 }
+/* Active summary highlight */
+.sv-submitted-count.active,
+.sv-pending-count.active {
+  text-decoration: none;
+  border-bottom: 2px solid currentColor;
+  padding-bottom: 2px;
+}
+
+/* Make summary clickable */
+.sv-submitted-count,
+.sv-pending-count {
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.sv-submitted-count:hover {
+  opacity: 0.8;
+}
+
+.sv-pending-count:hover {
+  opacity: 0.8;
+}
+
+/* Reset button */
+.sv-clear-filter {
+  background: transparent;
+  border: none;
+  font-size: 12px;
+  color: #4ba7b5;
+  cursor: pointer;
+}
+
+/* Sort row */
+.sv-sort-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.sv-sort-btn {
+  background: #eef6f8;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.sv-sort-btn:hover {
+  background: #dbeff3;
+}
+.sv-table tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.sv-table tbody tr:hover {
+  background: #f9fafb;
+  transform: scale(1.002);
+}
+.sv-review-btn:active,
+.sv-sort-btn:active,
+.sv-back-btn:active {
+  transform: scale(0.97);
+}
