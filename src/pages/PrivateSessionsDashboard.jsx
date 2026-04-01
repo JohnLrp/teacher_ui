@@ -11,7 +11,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import privateSessionService from "../api/privateSessionService";
+import * as privateSessionService from "../api/privateSessionService";
 import "../styles/privateSessions.css";
 
 /* ── Helpers ── */
