@@ -12,13 +12,14 @@ export default function UploadMaterial() {
   const { subjectId } = useParams();
 
   const [title, setTitle] = useState("");
+  const [files, setFiles] = useState([]);
   const [fileItems, setFileItems] = useState([]);
   const [chapters, setChapters] = useState([]);
   const [chapterId, setChapterId] = useState("");
   const [uploading, setUploading] = useState(false);
 
   const fileInputRef = useRef(null);
-  const controllersRef = useRef({});
+  const controllersRef = useRef({}); // ✅ for cancel
 
   useEffect(() => {
     if (subjectId) {
@@ -40,61 +41,11 @@ export default function UploadMaterial() {
     fileInputRef.current.click();
   };
 
-  // ✅ REAL UPLOAD FUNCTION
-  const uploadFile = async (file) => {
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const controller = new AbortController();
-    controllersRef.current[file.name] = controller;
-
-    const newItem = {
-      name: file.name,
-      progress: 0,
-      uploaded: false,
-      size: file.size,
-      id: null,
-    };
-
-    setFileItems((prev) => [...prev, newItem]);
-
-    try {
-
-      const res = await api.post(
-        `/materials/upload-file/`,
-        formData,
-        {
-          signal: controller.signal,
-          onUploadProgress: (e) => {
-            const percent = Math.round((e.loaded * 100) / e.total);
-
-            setFileItems((prev) =>
-              prev.map((f) =>
-                f.name === file.name ? { ...f, progress: percent } : f
-              )
-            );
-          },
-        }
-      );
-
-      setFileItems((prev) =>
-        prev.map((f) =>
-          f.name === file.name
-            ? { ...f, uploaded: true, id: res.data.id }
-            : f
-        )
-      );
-
-    } catch (err) {
-      console.error("Upload failed:", err);
-    }
-  };
-
-  // ✅ SELECT → AUTO UPLOAD
+  // ✅ NO simulateUpload anymore
   const handleFileChange = (e) => {
     const selected = Array.from(e.target.files || []);
     const allowedTypes = ["pdf", "doc", "docx"];
+    const newItems = [];
 
     selected.forEach((file) => {
       const ext = file.name.split(".").pop().toLowerCase();
@@ -109,16 +60,30 @@ export default function UploadMaterial() {
         return;
       }
 
-      uploadFile(file);
+      const item = {
+        file,
+        name: file.name,
+        progress: 0,
+        uploaded: false,
+        size: file.size,
+      };
+
+      newItems.push(item);
     });
+
+    setFileItems((prev) => [...prev, ...newItems]);
+    setFiles((prev) => [...prev, ...selected]);
 
     e.target.value = "";
   };
 
+  // ✅ REMOVE FILE
   const handleRemoveFile = (name) => {
     setFileItems((prev) => prev.filter((f) => f.name !== name));
+    setFiles((prev) => prev.filter((f) => f.name !== name));
   };
 
+  // ✅ CANCEL REAL UPLOAD
   const handleCancelUpload = (name) => {
     const controller = controllersRef.current[name];
     if (controller) {
@@ -126,10 +91,10 @@ export default function UploadMaterial() {
     }
 
     setFileItems((prev) => prev.filter((f) => f.name !== name));
+    setFiles((prev) => prev.filter((f) => f.name !== name));
   };
 
-  // ✅ SAVE (CREATE MATERIAL ONLY)
-  const handleSave = async () => {
+  const handleUpload = async () => {
 
     if (!title.trim()) {
       alert("Please enter a title");
@@ -141,34 +106,56 @@ export default function UploadMaterial() {
       return;
     }
 
-    const fileIds = fileItems
-      .filter((f) => f.uploaded)
-      .map((f) => f.id);
-
-    if (fileIds.length === 0) {
-      alert("Upload at least one file");
+    if (files.length === 0) {
+      alert("Please attach at least one file");
       return;
     }
 
     try {
-
       setUploading(true);
 
-      await api.post(
-        `/materials/chapters/${chapterId}/materials/upload/`,
-        {
-          title,
-          file_ids: fileIds,
-        }
-      );
+      for (const item of fileItems) {
 
-      alert("Saved successfully");
+        const formData = new FormData();
+        formData.append("title", title);
+        formData.append("files", item.file);
+
+        const controller = new AbortController();
+        controllersRef.current[item.name] = controller;
+
+        await api.post(
+          `/materials/chapters/${chapterId}/materials/upload/`,
+          formData,
+          {
+            signal: controller.signal,
+            onUploadProgress: (progressEvent) => {
+              const percent = Math.round(
+                (progressEvent.loaded * 100) / progressEvent.total
+              );
+
+              setFileItems((prev) =>
+                prev.map((f) =>
+                  f.name === item.name ? { ...f, progress: percent } : f
+                )
+              );
+            },
+          }
+        );
+
+        setFileItems((prev) =>
+          prev.map((f) =>
+            f.name === item.name ? { ...f, uploaded: true } : f
+          )
+        );
+      }
+
+      alert("Upload successful");
 
       navigate(`/teacher/classes/${subjectId}/study-materials`);
 
     } catch (err) {
-      console.error(err);
-      alert("Save failed");
+      console.error("Upload failed:", err);
+      alert("Upload failed");
     } finally {
       setUploading(false);
     }
@@ -308,10 +295,10 @@ export default function UploadMaterial() {
 
             <button
               className="um-upload-btn"
-              onClick={handleSave}
+              onClick={handleUpload}
               disabled={uploading}
             >
-              {uploading ? "Saving..." : "Save"}
+              {uploading ? "Uploading..." : "Upload"}
             </button>
 
           </div>
