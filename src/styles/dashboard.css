@@ -381,6 +381,7 @@
 /* --- ACTIVITY / TIMELINE ITEMS --- */
 
 .act-item {
+  position: relative;
   background: #f7f4f4;
   border-radius: 14px;
   padding: 16px 14px;
@@ -389,6 +390,18 @@
   margin-bottom: 14px;
   align-items: flex-start;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+}
+
+.act-day-badge {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  background: #e8ecf1;
+  color: #5a6a72;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 8px;
 }
 
 .act-bar {
