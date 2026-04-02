@@ -77,7 +77,7 @@ body {
 
 /* CARD */
 .um-form-card {
-  background: #dcd5c9;
+  background: transparent;
   border-radius: 12px;
   padding: 36px 48px;
   width: 100%;

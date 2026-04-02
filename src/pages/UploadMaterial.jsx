@@ -236,69 +236,74 @@ export default function UploadMaterial() {
 
           </div>
 
-          {/* RIGHT */}
-          <div className="um-upload-panel">
+          {/* RIGHT SIDE WRAPPER */}
+          <div style={{ display: "flex", flexDirection: "column" }}>
 
-            <div className="um-upload-title">
-              Upload File ({fileItems.filter(f => f.status === "done").length})
-            </div>
+            <div className="um-upload-panel">
 
-            <input
-              type="file"
-              ref={fileInputRef}
-              style={{ display: "none" }}
-              multiple
-              accept=".pdf,.doc,.docx"
-              onChange={handleFileChange}
-            />
-
-            <button
-              className="um-add-attachment-btn"
-              onClick={handleAddAttachment}
-            >
-              Click to upload or drag & drop
-            </button>
-
-            <div className="um-upload-info">
-              Max 50MB/file • PDF, DOC, DOCX
-            </div>
-
-            {fileItems.length > 0 && (
-              <div className="um-file-list">
-                {fileItems.map((item, i) => (
-                  <div key={i} className="um-file-card">
-
-                    <div style={{ display: "flex", justifyContent: "space-between" }}>
-                      <span>{item.name}</span>
-                      <MdDelete
-                        style={{ cursor: "pointer" }}
-                        onClick={() => handleRemoveFile(item.name)}
-                      />
-                    </div>
-
-                    <small>
-                      {(item.size / 1024).toFixed(1)} KB
-                    </small>
-
-                    <div className="um-progress-bar">
-                      <div
-                        className="um-progress-fill"
-                        style={{ width: `${item.progress}%` }}
-                      />
-                    </div>
-
-                    <span>
-                      {item.status === "done" ? "Completed" : `${item.progress}%`}
-                    </span>
-
-                  </div>
-                ))}
+              <div className="um-upload-title">
+                Upload File ({fileItems.filter(f => f.status === "done").length})
               </div>
-            )}
 
-            {/* ✅ SAVE BUTTON AT BOTTOM */}
+              <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                multiple
+                accept=".pdf,.doc,.docx"
+                onChange={handleFileChange}
+              />
+
+              <button
+                className="um-add-attachment-btn"
+                onClick={handleAddAttachment}
+              >
+                Click to upload or drag & drop
+              </button>
+
+              <div className="um-upload-info">
+                Max 50MB/file • PDF, DOC, DOCX
+              </div>
+
+              {fileItems.length > 0 && (
+                <div className="um-file-list">
+                  {fileItems.map((item, i) => (
+                    <div key={i} className="um-file-card">
+
+                      <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <span>{item.name}</span>
+                        <MdDelete
+                          style={{ cursor: "pointer" }}
+                          onClick={() => handleRemoveFile(item.name)}
+                        />
+                      </div>
+
+                      <small>
+                        {(item.size / 1024).toFixed(1)} KB
+                      </small>
+
+                      <div className="um-progress-bar">
+                        <div
+                          className="um-progress-fill"
+                          style={{ width: `${item.progress}%` }}
+                        />
+                      </div>
+
+                      <span>
+                        {item.status === "done" ? "Completed" : `${item.progress}%`}
+                      </span>
+
+                    </div>
+                  ))}
+                </div>
+              )}
+
+            </div>
+
+            {/* ✅ SAVE BUTTON BELOW PANEL */}
             <button
-              className="um-save-btn um-save-bottom"
+              className="um-save-btn"
+              style={{ marginTop: "10px", alignSelf: "flex-end" }}
               onClick={handleUpload}
               disabled={uploading}
             >
