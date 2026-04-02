@@ -80,18 +80,7 @@ export default function SubmissionView() {
       <div className="sv-header">
         <h2 className="sv-title">Assignment Submissions</h2>
 
-        {/* ✅ NEW: DOWNLOAD ALL BUTTON */}
-        <button
-          className="sv-review-btn"
-          style={{ marginLeft: "10px" }}
-          onClick={() =>
-            window.open(
-              `/assignments/teacher/${assignmentId}/download-all/`
-            )
-          }
-        >
-          Download All
-        </button>
+        
 
         <div className="sv-search">
           <input
