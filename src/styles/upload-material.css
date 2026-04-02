@@ -10,6 +10,7 @@ body {
   gap: 12px;
   height: 100%;
   padding: 16px;
+  background:#C8D0D3;
 }
 
 /* BACK */
@@ -30,7 +31,7 @@ body {
 
 /* HEADER */
 .um-header {
-  background: #C8D0D3;
+  background: #eceff0;
   border-radius: 14px;
   padding: 18px 24px;
 }
@@ -66,7 +67,7 @@ body {
 
 /* CONTAINER */
 .um-form-container {
-  background: #C8D0D3;
+  background: #eceff0;
   border-radius: 16px;
   padding: 30px;
   flex: 1;
