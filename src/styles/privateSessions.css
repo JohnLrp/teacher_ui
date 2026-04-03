@@ -46,6 +46,8 @@
   border: none;
   border-right: 2px solid #3b5c7c;
   cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
   transition: background 0.18s, color 0.18s, transform 0.1s;
 }
 .tps__tab:last-child { border-right: none; }
@@ -184,6 +186,7 @@
 .tps__back {
   background: #3b5c7c; color: #fff; border: none; border-radius: 20px;
   padding: 7px 20px; font-size: 13px; font-weight: 600; cursor: pointer;
+  -webkit-user-select: none; user-select: none;
   margin-bottom: 16px;
   transition: background 0.15s, transform 0.1s;
 }
@@ -204,6 +207,7 @@
 .tps__abtn {
   padding: 8px 22px; border-radius: 8px; font-size: 13px; font-weight: 600;
   cursor: pointer; border: none;
+  -webkit-user-select: none; user-select: none;
   transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
 }
 .tps__abtn:active { transform: scale(0.96); }

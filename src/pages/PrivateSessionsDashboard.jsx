@@ -70,7 +70,9 @@ function norm(s) {
     _student: s.student_name || s.requested_by?.name || s.requested_by || "",
     _teacher: s.teacher_name || s.teacher?.name || s.teacher || "",
     _groupSize: s.group_strength || s.group_size || 0,
-    _duration: s.duration || "",
+    _duration: s._duration || s.duration_minutes || s.duration || "",
+    _durationLabel: s._durationLabel || (s.duration_minutes ? `${s.duration_minutes} minutes` : ""),
+    _actualDuration: s._actualDuration || s.actual_duration_minutes || null,
     _studentId: s.student_id || s.requested_by?.user_id || "",
     _courseId: s.course_id || "",
     _subjectCode: s.subject_code || "",
@@ -267,6 +269,7 @@ export default function PrivateSessionsDashboard() {
                   <div className="tps__hrow-dt">
                     <p>📅 {fmtDate(h._date)}</p>
                     <p>🕐 {fmtTime(h._time)}{calcEnd(h._time, h._duration) ? ` to ${calcEnd(h._time, h._duration)}` : ""}</p>
+                    <p>⏱ {h._actualDuration ? `${h._actualDuration} mins` : h._durationLabel || `${h._duration} mins`}</p>
                   </div>
                   <div className="tps__hrow-gs">👥 {h._groupSize}</div>
                   <div className="tps__hrow-st">

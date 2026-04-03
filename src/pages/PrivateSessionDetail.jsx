@@ -15,6 +15,8 @@ import "../styles/privateSessions.css";
 /* ── Normalize fields — handles both mock + real API shapes ── */
 function norm(s) {
   if (!s) return null;
+  const actualDur = s.actual_duration_minutes;
+  const scheduledDur = s.duration_minutes || (typeof s.duration === "number" ? s.duration : parseInt(s.duration, 10) || 0);
   return {
     ...s,
     _date: s.scheduled_date || s.requested_date || s.date || "",
@@ -22,8 +24,9 @@ function norm(s) {
     _student: s.student_name || s.requested_by?.name || (typeof s.requested_by === "string" ? s.requested_by : ""),
     _teacher: s.teacher_name || s.teacher?.name || (typeof s.teacher === "string" ? s.teacher : ""),
     _groupSize: s.group_strength || s.group_size || 0,
-    _duration: typeof s.duration === "number" ? s.duration : parseInt(s.duration, 10) || 0,
-    _durationLabel: s.duration || "",
+    _duration: actualDur || scheduledDur,
+    _durationLabel: actualDur ? `${actualDur} mins (actual)` : (scheduledDur ? `${scheduledDur} minutes` : ""),
+    _actualDuration: actualDur,
     _participants: s.participants || [],
   };
 }
