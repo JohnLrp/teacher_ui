@@ -1,6 +1,10 @@
 /**
  * FILE: teacher_ui/src/pages/PrivateSessionDetail.jsx
  * DEPLOYMENT READY — field-name agnostic via norm()
+ *
+ * FIX: Moved isApproved/isOngoing/isPending/isProposed declarations
+ *      ABOVE `startable` to fix TDZ (Temporal Dead Zone) error:
+ *      "Cannot access 'ae' before initialization"
  */
 
 import { useEffect, useState } from "react";
@@ -151,12 +155,14 @@ export default function PrivateSessionDetail() {
   );
 
   const s = norm(session);
-  const startable = isApproved;
-  const mins = minsUntilStart(s._date, s._time);
+
+  // ✅ FIX: Declare status flags BEFORE they are used
   const isPending = s.status === "pending";
   const isProposed = s.status === "proposed_changes" || s.status === "needs_reconfirmation";
   const isApproved = s.status === "approved";
   const isOngoing = s.status === "ongoing";
+  const startable = isApproved;
+  const mins = minsUntilStart(s._date, s._time);
 
   async function doAction(fn) {
     setBusy(true);
