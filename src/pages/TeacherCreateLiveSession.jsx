@@ -29,10 +29,13 @@ function toLocalInput(date) {
   return local.toISOString().slice(0, 16);
 }
 
-// Min datetime (disable past)
+// 🔥 MIN DATETIME (disable past)
 function getMinDateTime() {
   const now = new Date();
+
+  // small buffer to avoid backend rejection
   now.setMinutes(now.getMinutes() + 2);
+
   return toLocalInput(roundToSlot(now));
 }
 
@@ -65,20 +68,6 @@ export default function TeacherCreateLiveSession() {
   };
 
   /* =====================================
-     🔥 START NOW BUTTON
-  ===================================== */
-  const handleStartNow = () => {
-    const now = roundToSlot(new Date());
-
-    setForm({
-      ...form,
-      start_time: toLocalInput(now),
-    });
-
-    toast("⚡ Starting now!");
-  };
-
-  /* =====================================
      🔥 HANDLE SUBMIT
   ===================================== */
   const handleSubmit = async () => {
@@ -106,6 +95,7 @@ export default function TeacherCreateLiveSession() {
 
       toast.success("✅ Live session created!");
 
+      // slight delay so user sees toast
       setTimeout(() => {
         navigate(-1);
       }, 800);
@@ -127,6 +117,10 @@ export default function TeacherCreateLiveSession() {
       setLoading(false);
     }
   };
+
+  /* =====================================
+     🔥 UI
+  ===================================== */
 
   const durationOptions = [
     { label: "+30 min", value: 30 },
@@ -176,32 +170,13 @@ export default function TeacherCreateLiveSession() {
 
           {/* START TIME */}
           <div className="lsc-field">
-            <label>Start Time</label>
-
-            <div style={{ display: "flex", gap: 10 }}>
-              <input
-                type="datetime-local"
-                value={form.start_time}
-                min={minDateTime}
-                onChange={(e) => handleStartTimeChange(e.target.value)}
-              />
-
-              {/* 🔥 START NOW BUTTON */}
-              <button
-                type="button"
-                onClick={handleStartNow}
-                style={{
-                  padding: "8px 12px",
-                  borderRadius: 8,
-                  background: "#16a34a",
-                  color: "white",
-                  border: "none",
-                  cursor: "pointer",
-                }}
-              >
-                ⚡ Start Now
-              </button>
-            </div>
+            <label>Start Time (15-min slots)</label>
+            <input
+              type="datetime-local"
+              value={form.start_time}
+              min={minDateTime}   // 🔥 disables past
+              onChange={(e) => handleStartTimeChange(e.target.value)}
+            />
           </div>
 
           {/* DURATION */}

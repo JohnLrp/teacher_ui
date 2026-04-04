@@ -167,6 +167,7 @@ export default function LiveSessions() {
             !error &&
             filtered.map((session) => {
               const startDate = new Date(session.start_time);
+              const endDate = new Date(session.end_time);
 
               return (
                 <div
@@ -180,10 +181,19 @@ export default function LiveSessions() {
                     <h4 className="session-card-subject">
                       {session.subject_name}
                     </h4>
+
                     <p className="session-card-course">
                       {session.course_name}
                     </p>
-                    <p className="session-card-topic">{session.title}</p>
+
+                    <p className="session-card-topic">
+                      {session.title}
+                    </p>
+
+                    {/* 🔥 NEW: TEACHER */}
+                    <p className="session-card-teacher">
+                      👨‍🏫 {session.teacher || "You"}
+                    </p>
                   </div>
 
                   <div className="session-card-meta">
@@ -206,7 +216,7 @@ export default function LiveSessions() {
                     )}
                   </div>
 
-                  {/* 🔥 UPDATED BOTTOM WITH COUNTDOWN */}
+                  {/* 🔥 IMPROVED BOTTOM */}
                   <div className="session-card-bottom">
                     <span>
                       {startDate.toLocaleDateString("en-GB", {
@@ -224,6 +234,16 @@ export default function LiveSessions() {
                       })}
                     </span>
 
+                    {/* 🔥 NEW: END TIME */}
+                    <span>
+                      Ends: {endDate.toLocaleTimeString("en-GB", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      })}
+                    </span>
+
+                    {/* 🔥 COUNTDOWN */}
                     <span className="starts-in">
                       {getCountdown(session.start_time)}
                     </span>
