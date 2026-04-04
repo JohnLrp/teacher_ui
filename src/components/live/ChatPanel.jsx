@@ -11,10 +11,18 @@ export default function ChatPanel({ role }) {
 
   const messagesEndRef = useRef(null);
 
+  const isPresenter = role === "PRESENTER"; // 🔥 FIX
+
+  /* =====================================
+     🔥 AUTO SCROLL
+  ===================================== */
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  /* =====================================
+     🔥 RECEIVE MESSAGES
+  ===================================== */
   useEffect(() => {
     const handleData = (payload, participant) => {
       const text = new TextDecoder().decode(payload);
@@ -25,7 +33,10 @@ export default function ChatPanel({ role }) {
       } catch {}
 
       const meta = participant.metadata ? JSON.parse(participant.metadata) : null;
-      const isTeacher = meta?.role === "teacher" || participant.permissions?.canPublish;
+
+      // 🔥 FIX: new role system
+      const isSenderPresenter =
+        meta?.role === "presenter" || participant.permissions?.canPublish;
 
       const displayName = participant.name || participant.identity;
 
@@ -34,7 +45,7 @@ export default function ChatPanel({ role }) {
         {
           sender: displayName,
           text,
-          isTeacher,
+          isTeacher: isSenderPresenter, // keep name for styling
           time: new Date(),
         },
       ]);
@@ -44,10 +55,14 @@ export default function ChatPanel({ role }) {
     return () => room.off("dataReceived", handleData);
   }, [room]);
 
+  /* =====================================
+     🔥 SEND MESSAGE
+  ===================================== */
   const sendMessage = async () => {
     if (!input.trim()) return;
 
     const encoder = new TextEncoder();
+
     await localParticipant.publishData(
       encoder.encode(input),
       { reliable: true }
@@ -66,15 +81,22 @@ export default function ChatPanel({ role }) {
     setInput("");
   };
 
+  /* =====================================
+     🔥 RAISE HAND (VIEWERS ONLY)
+  ===================================== */
   const raiseHand = async () => {
     const message = { type: "raise-hand" };
     const encoder = new TextEncoder();
+
     await localParticipant.publishData(
       encoder.encode(JSON.stringify(message)),
       { reliable: true }
     );
   };
 
+  /* =====================================
+     🔥 FORMAT TIME
+  ===================================== */
   const formatTime = (date) =>
     new Date(date).toLocaleTimeString([], {
       hour: "2-digit",
@@ -89,31 +111,41 @@ export default function ChatPanel({ role }) {
         {messages.length === 0 && (
           <p className="chat-empty">No messages yet. Say hello!</p>
         )}
+
         {messages.map((msg, i) => (
           <div
             key={i}
             className={`chat-row ${msg.isMe ? "me" : "other"}`}
           >
             <div
-              className={`chat-bubble ${msg.isMe ? "me-bubble" : ""} ${msg.isTeacher ? "teacher-bubble" : ""}`}
+              className={`chat-bubble 
+                ${msg.isMe ? "me-bubble" : ""} 
+                ${msg.isTeacher ? "teacher-bubble" : ""}
+              `}
             >
               <span className="chat-name">
                 {msg.isMe ? "You" : msg.sender}
+
+                {/* 🔥 FIX: LABEL */}
                 {msg.isTeacher && !msg.isMe && (
-                  <span className="teacher-tag"> • Teacher</span>
+                  <span className="teacher-tag"> • Presenter</span>
                 )}
               </span>
+
               <div className="chat-text">{msg.text}</div>
               <div className="chat-time">{formatTime(msg.time)}</div>
             </div>
           </div>
         ))}
+
         <div ref={messagesEndRef} />
       </div>
 
       {/* INPUT */}
       <div className="chat-input-area">
-        {role === "student" && (
+
+        {/* 🔥 ONLY VIEWERS CAN RAISE HAND */}
+        {!isPresenter && (
           <button
             onClick={raiseHand}
             className="raise-hand-btn"
