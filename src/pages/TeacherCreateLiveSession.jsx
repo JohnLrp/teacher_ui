@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { IoChevronBack } from "react-icons/io5";
 import api from "../api/apiClient";
 import "../styles/live-session-create.css";
+import toast from "react-hot-toast";
 
 /* =====================================
    🔥 TIME HELPERS
@@ -28,17 +29,28 @@ function toLocalInput(date) {
   return local.toISOString().slice(0, 16);
 }
 
+// 🔥 MIN DATETIME (disable past)
+function getMinDateTime() {
+  const now = new Date();
+
+  // small buffer to avoid backend rejection
+  now.setMinutes(now.getMinutes() + 2);
+
+  return toLocalInput(roundToSlot(now));
+}
+
 export default function TeacherCreateLiveSession() {
   const { subjectId } = useParams();
   const navigate = useNavigate();
 
   const now = roundToSlot(new Date());
+  const minDateTime = getMinDateTime();
 
   const [form, setForm] = useState({
     title: "",
     description: "",
     start_time: toLocalInput(now),
-    duration: 60, // default 1 hour
+    duration: 60,
   });
 
   const [error, setError] = useState(null);
@@ -63,6 +75,7 @@ export default function TeacherCreateLiveSession() {
 
     if (!form.title || !form.start_time) {
       setError("Please fill all required fields.");
+      toast.error("Please fill all required fields");
       return;
     }
 
@@ -80,18 +93,26 @@ export default function TeacherCreateLiveSession() {
         end_time: end.toISOString(),
       });
 
-      navigate(-1);
+      toast.success("✅ Live session created!");
+
+      // slight delay so user sees toast
+      setTimeout(() => {
+        navigate(-1);
+      }, 800);
+
     } catch (err) {
       console.error(err);
 
-      setError(
+      const msg =
         err.response?.data?.detail ||
         err.response?.data?.start_time?.[0] ||
         err.response?.data?.end_time?.[0] ||
         err.response?.data?.subject_id?.[0] ||
         err.response?.data?.non_field_errors?.[0] ||
-        "Failed to create session."
-      );
+        "Failed to create session.";
+
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -153,11 +174,12 @@ export default function TeacherCreateLiveSession() {
             <input
               type="datetime-local"
               value={form.start_time}
+              min={minDateTime}   // 🔥 disables past
               onChange={(e) => handleStartTimeChange(e.target.value)}
             />
           </div>
 
-          {/* DURATION BUTTONS */}
+          {/* DURATION */}
           <div className="lsc-field">
             <label>Duration</label>
 
