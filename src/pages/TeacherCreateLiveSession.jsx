@@ -5,38 +5,28 @@ import api from "../api/apiClient";
 import "../styles/live-session-create.css";
 import toast from "react-hot-toast";
 
+// ✅ NEW
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 /* =====================================
    🔥 TIME HELPERS
 ===================================== */
 
-// Round to nearest 15 min
+// ✅ safer rounding (no 60 min bug)
 function roundToSlot(date) {
   const d = new Date(date);
   const minutes = d.getMinutes();
+  const remainder = minutes % 15;
 
-  const rounded = Math.ceil(minutes / 15) * 15;
-  d.setMinutes(rounded);
+  if (remainder !== 0) {
+    d.setMinutes(minutes + (15 - remainder));
+  }
+
   d.setSeconds(0);
   d.setMilliseconds(0);
 
   return d;
-}
-
-// Convert to datetime-local format
-function toLocalInput(date) {
-  const offset = date.getTimezoneOffset();
-  const local = new Date(date.getTime() - offset * 60000);
-  return local.toISOString().slice(0, 16);
-}
-
-// 🔥 MIN DATETIME (disable past)
-function getMinDateTime() {
-  const now = new Date();
-
-  // small buffer to avoid backend rejection
-  now.setMinutes(now.getMinutes() + 2);
-
-  return toLocalInput(roundToSlot(now));
 }
 
 export default function TeacherCreateLiveSession() {
@@ -44,12 +34,11 @@ export default function TeacherCreateLiveSession() {
   const navigate = useNavigate();
 
   const now = roundToSlot(new Date());
-  const minDateTime = getMinDateTime();
 
   const [form, setForm] = useState({
     title: "",
     description: "",
-    start_time: toLocalInput(now),
+    start_time: now, // ✅ Date object
     duration: 60,
   });
 
@@ -57,13 +46,12 @@ export default function TeacherCreateLiveSession() {
   const [loading, setLoading] = useState(false);
 
   /* =====================================
-     🔥 HANDLE START TIME CHANGE
+     🔥 START NOW
   ===================================== */
-  const handleStartTimeChange = (value) => {
-    const rounded = roundToSlot(new Date(value));
+  const handleStartNow = () => {
     setForm({
       ...form,
-      start_time: toLocalInput(rounded),
+      start_time: roundToSlot(new Date()),
     });
   };
 
@@ -82,7 +70,7 @@ export default function TeacherCreateLiveSession() {
     try {
       setLoading(true);
 
-      const start = new Date(form.start_time);
+      const start = form.start_time;
       const end = new Date(start.getTime() + form.duration * 60000);
 
       await api.post("/livestream/sessions/", {
@@ -95,7 +83,6 @@ export default function TeacherCreateLiveSession() {
 
       toast.success("✅ Live session created!");
 
-      // slight delay so user sees toast
       setTimeout(() => {
         navigate(-1);
       }, 800);
@@ -171,12 +158,37 @@ export default function TeacherCreateLiveSession() {
           {/* START TIME */}
           <div className="lsc-field">
             <label>Start Time (15-min slots)</label>
-            <input
-              type="datetime-local"
-              value={form.start_time}
-              min={minDateTime}   // 🔥 disables past
-              onChange={(e) => handleStartTimeChange(e.target.value)}
+
+            <DatePicker
+              selected={form.start_time}
+              onChange={(date) =>
+                setForm({
+                  ...form,
+                  start_time: roundToSlot(date),
+                })
+              }
+              showTimeSelect
+              timeIntervals={15} // 🔥 15-min enforced
+              timeCaption="Time"
+              dateFormat="dd-MM-yyyy HH:mm"
+              minDate={new Date()}
+              className="lsc-input"
             />
+
+            {/* ✅ START NOW BUTTON */}
+            <button
+              type="button"
+              onClick={handleStartNow}
+              style={{
+                marginTop: "8px",
+                padding: "6px 10px",
+                borderRadius: "6px",
+                border: "1px solid #ccc",
+                cursor: "pointer",
+              }}
+            >
+              ⚡ Start Now
+            </button>
           </div>
 
           {/* DURATION */}
